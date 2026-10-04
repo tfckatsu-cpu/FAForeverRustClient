@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { CoopScenario } from "../../../ipc/bindings";
 import { translateIn } from "../../../i18n";
 import {
+  displayScenarioOptionLabel,
   displayScenarioName,
   scenarioBadge,
   sortCoopScenarios,
@@ -71,7 +72,7 @@ describe("co-op campaign ordering", () => {
       [
         scenario("Seraphim Campaign", "seraphim", "custom", 3),
         "Кампания Серафим",
-        "seraphim",
+        "custom",
       ],
     ])("localizes community catalog label %s and keeps its badge", (entry, expected, badge) => {
       const t = (key: Parameters<typeof translateIn>[1], values?: Parameters<typeof translateIn>[2]) =>
@@ -85,6 +86,64 @@ describe("co-op campaign ordering", () => {
       const t = (key: Parameters<typeof translateIn>[1], values?: Parameters<typeof translateIn>[2]) =>
         translateIn("en", key, values);
       expect(displayScenarioName(entry, "en", t)).toBe("Vanilla Aeon Campaign");
+    });
+
+    it("localizes known campaigns regardless of API category or faction metadata", () => {
+      const t = (key: Parameters<typeof translateIn>[1], values?: Parameters<typeof translateIn>[2]) =>
+        translateIn("ru", key, values);
+      const entries = [
+        scenario("Vanilla UEF Campaign", "custom", "custom", 1),
+        scenario("Vanilla Cybran Campaign", "custom", "custom", 2),
+        scenario("Vanilla Aeon Campaign", "custom", "custom", 3),
+        scenario("Forged Alliance Campaign", "uef", "custom", 4),
+        scenario("Coalition Campaign", "custom", "sc", 5),
+        scenario("Seraphim Campaign", "custom", "scfa", 6),
+        scenario("Standalone missions", "custom", "sc", 7),
+      ];
+
+      expect(entries.map((entry) => displayScenarioName(entry, "ru", t))).toEqual([
+        "Кампания ОФЗ (SC)",
+        "Кампания Кибран (SC)",
+        "Кампания Эон (SC)",
+        "Кампания SCFA (Forged Alliance)",
+        "Кампания Коалиции",
+        "Кампания Серафим",
+        "Отдельные миссии",
+      ]);
+    });
+
+    it("does not repeat a badge already present in the translated campaign name", () => {
+      const t = (key: Parameters<typeof translateIn>[1], values?: Parameters<typeof translateIn>[2]) =>
+        translateIn("ru", key, values);
+
+      expect(
+        displayScenarioOptionLabel(
+          scenario("Vanilla UEF Campaign", "uef", "sc", 1),
+          "ru",
+          t,
+        ),
+      ).toBe("Кампания ОФЗ (SC)");
+      expect(
+        displayScenarioOptionLabel(
+          scenario("Seraphim Campaign", "seraphim", "custom", 2),
+          "ru",
+          t,
+        ),
+      ).toBe("Кампания Серафим (От сообщества)");
+      expect(
+        displayScenarioOptionLabel(
+          scenario("Forged Alliance Campaign", "custom", "scfa", 3),
+          "ru",
+          t,
+        ),
+      ).toBe("Кампания SCFA (Forged Alliance)");
+      expect(
+        displayScenarioOptionLabel(
+          scenario("Coalition Campaign", "custom", "custom", 4),
+          "ru",
+          t,
+        ),
+      ).toBe("Кампания Коалиции (От сообщества)");
     });
   });
 
@@ -102,6 +161,6 @@ describe("co-op campaign ordering", () => {
     expect(scenarioBadge(byName.get("Forged Alliance Campaign")!)).toBe("official");
     expect(scenarioBadge(byName.get("Coalition Campaign")!)).toBe("custom");
     expect(scenarioBadge(byName.get("Vanilla UEF Campaign")!)).toBe("uef");
-    expect(scenarioBadge(byName.get("Seraphim Campaign")!)).toBe("seraphim");
+    expect(scenarioBadge(byName.get("Seraphim Campaign")!)).toBe("custom");
   });
 });

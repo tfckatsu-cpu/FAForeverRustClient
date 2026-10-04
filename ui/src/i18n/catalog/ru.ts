@@ -29,7 +29,7 @@ export const ru: Partial<Record<MessageKey, Message>> = {
   "nav.tab.events.description": "Что происходит и когда",
   "nav.tab.training.label": "Обучение",
   "nav.tab.training.description": "Стать сильнее в FAF",
-  "nav.tab.changelog.label": "Патчноуты",
+  "nav.tab.changelog.label": "Что нового",
   "nav.tab.changelog.description": "Заметки к патчам от разработчиков FAF",
   "nav.tab.units.label": "Юниты",
   "nav.tab.units.description": "База данных игры",
@@ -1432,7 +1432,7 @@ export const ru: Partial<Record<MessageKey, Message>> = {
 
   "replays.vault.pagesAria": "Страницы сетевых повторов",
   "replays.search.player": "Игрок",
-  "replays.search.anyPlayer": "Имена игроков через запятую",
+  "replays.search.anyPlayer": "Никнейм игрока",
   "replays.search.map": "Карта",
   "replays.search.anyMap": "Любая карта",
   "replays.search.replayId": "ID реплея",
